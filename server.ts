@@ -1,11 +1,14 @@
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 
+import { unpack } from './packaging/unpacking';
+
 const server = createServer();
 const io = new Server(server);
 
 io.on('connection', (socket: Socket) => {
-    socket.on('room:join', (room: JSON) => {
+    socket.on('room:join', (raw_room: string) => {
+        const room = unpack(raw_room);
 
     });
 });
