@@ -1,3 +1,3 @@
-export const packing = (data: object): string => {
+export const pack = (data: object): string => {
     return JSON.stringify(data);
 }

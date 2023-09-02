@@ -6,8 +6,6 @@ import { sumArrayCouple } from '../service-functions/sumArrayCouple';
 import { ClientStatus } from '../types/clientStatus';
 import { Couple } from '../types/couple';
 
-
-
 export const boardCheck = (clientStatus: ClientStatus): number[] => {
     const unmoved: boolean = !clientStatus.previousMoves.includes[clientStatus.move.old];
 
@@ -18,7 +16,7 @@ export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
     switch (activePiece.toLowerCase()) {
         case 'p':
-            possibleMoves = pawnCheck(position, clientStatus.board, unmoved);
+            possibleMoves = pawnCheck(position, clientStatus.board, unmoved, activePiece);
             break;
 
         case 'b':
@@ -61,7 +59,7 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
     switch (needsEmptySpace) {
         case undefined:
             return newPosition;
-        
+
         case true:
             if (board[newPosition] === ' ') {
                 return newPosition;
@@ -78,16 +76,29 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
 
 }
 
-const pawnCheck = (position: Couple, board: string, unmoved: boolean): number[] => {
+const pawnCheck = (position: Couple, board: string, unmoved: boolean, activePiece: string): number[] => {
 
     let results: number[];
 
-    const possiblePawnMoves: Couple[] = [
-        [0, 1],
-        [0, 2],
-        [1, 1],
-        [-1, 1]
+    const possiblePawnMoves: Couple[][] = [
+        [
+            [0, 1],
+            [0, 2],
+            [1, 1],
+            [-1, 1]
+        ],
+        [
+            [0, -1],
+            [0, -2],
+            [1, -1],
+            [-1, -1]
+        ]
     ];
+
+    let section = 0;
+    if (isLowerCase(activePiece)) {
+        section = 1;
+    }
 
     for (let i = 0; i < possiblePawnMoves.length; i++) {
 
@@ -95,7 +106,7 @@ const pawnCheck = (position: Couple, board: string, unmoved: boolean): number[] 
             continue;
         }
 
-        const result: number | undefined = spaceCheck(position, possiblePawnMoves[i], board, (i <= 2));
+        const result: number | undefined = spaceCheck(position, possiblePawnMoves[section][i], board, (i <= 2));
 
         if (result === undefined) {
             if (i === 0) {
@@ -112,7 +123,7 @@ const pawnCheck = (position: Couple, board: string, unmoved: boolean): number[] 
 }
 
 const bishopCheck = (position: Couple, board: string): number[] => {
-    
+
     let results: number[];
 
     const bishopDirections: Couple[] = [
@@ -148,7 +159,7 @@ const bishopCheck = (position: Couple, board: string): number[] => {
 }
 
 const knightCheck = (position: Couple, board: string): number[] => {
-    
+
     let results: number[];
 
     const possibleKnightMoves: Couple[] = [
@@ -177,7 +188,7 @@ const knightCheck = (position: Couple, board: string): number[] => {
 }
 
 const rookCheck = (position: Couple, board: string): number[] => {
-    
+
     let results: number[];
 
     const rookDirections: Couple[] = [
@@ -214,7 +225,7 @@ const rookCheck = (position: Couple, board: string): number[] => {
 }
 
 const queenCheck = (position: Couple, board: string): number[] => {
-    
+
     let results: number[];
 
     results = bishopCheck(position, board);
@@ -225,7 +236,7 @@ const queenCheck = (position: Couple, board: string): number[] => {
 }
 
 const kingCheck = (position: Couple, board: string): number[] => {
-    
+
     let results: number[];
 
     const possibleKingMoves: Couple[] = [

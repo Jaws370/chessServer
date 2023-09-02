@@ -1,13 +1,34 @@
 import { Server } from 'socket.io';
+
+import { boardCheck } from '../game-processing/board-check';
+
 import { ClientStatus } from '../types/clientStatus';
+import { ServerStatus } from '../types/serverStatus';
+
+import { positionAlphabeticalToIndex } from '../game-processing/position-transformations';
+import { updateBoard } from '../game-processing/board-change';
+import { pack } from '../packaging/packing';
 
 export const goMove = function (io: Server, clientStatus: ClientStatus, room: string): void {
-    let clientNumber: number = clientStatus.clientNumber;
+    let clientToMove: number = clientStatus.clientNumber;
     let wasValid: boolean = false;
-    //const possibleMoves: number[] = findValidMoves(clientStatus.move.old, clientStatus.previousMoves, clientStatus.board);
+    
+    const possibleMoves: number[] = boardCheck(clientStatus);
 
+    if (possibleMoves.includes(positionAlphabeticalToIndex(clientStatus.move.new))) {
+        clientToMove = clientStatus.clientNumber === 1 ? 2 : 1;
+        wasValid = true;
+        clientStatus.board = updateBoard(clientStatus.move, clientStatus.board);
+    }
 
-    io.to(room).emit('status:update', 'hej');
+    const serverStatus: ServerStatus = {
+        clientToMove: clientToMove,
+        wasGoodMove: wasValid,
+        previousMoves: [...clientStatus.previousMoves, clientStatus.move.new],
+        board: clientStatus.board
+    }
+
+    io.to(room).emit('status:update', pack(serverStatus));
 }
 
 export const statusCheck = function (): void {
