@@ -6,5 +6,5 @@ export type ClientStatus = {
         new: string
     },
     board?: string,
-    previousMoves?: number[]
+    previousMoves?: string[]
 }
