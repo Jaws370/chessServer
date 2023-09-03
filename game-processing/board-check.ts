@@ -7,7 +7,8 @@ import { ClientStatus } from '../types/clientStatus';
 import { Couple } from '../types/couple';
 
 export const boardCheck = (clientStatus: ClientStatus): number[] => {
-    const unmoved: boolean = !clientStatus.previousMoves.includes[clientStatus.move.old];
+
+    const hasMoved: boolean = clientStatus.previousMoves.includes(clientStatus.move.old);
 
     const position: Couple = positionAlphabeticalToNumerical(clientStatus.move.old);
     const activePiece: string = clientStatus.board[positionNumericalToIndex(position)];
@@ -16,7 +17,7 @@ export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
     switch (activePiece.toLowerCase()) {
         case 'p':
-            possibleMoves = pawnCheck(position, clientStatus.board, unmoved, activePiece);
+            possibleMoves = pawnCheck(position, clientStatus.board, hasMoved, activePiece);
             break;
 
         case 'b':
@@ -52,7 +53,6 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
 
     if (isSameCase(board[position], board[newPosition])) {
         return;
-
     }
 
     switch (needsEmptySpace) {
@@ -75,7 +75,7 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
 
 }
 
-const pawnCheck = (position: Couple, board: string, unmoved: boolean, activePiece: string): number[] => {
+const pawnCheck = (position: Couple, board: string, hasMoved: boolean, activePiece: string): number[] => {
 
     let results: number[] = [];
 
@@ -99,13 +99,19 @@ const pawnCheck = (position: Couple, board: string, unmoved: boolean, activePiec
         section = 1;
     }
 
-    for (let i = 0; i < possiblePawnMoves.length; i++) {
+    for (let i = 0; i < possiblePawnMoves[section].length; i++) {
 
-        if (i === 2 && !unmoved) {
+        if (i === 1 && hasMoved) {
             continue;
         }
 
-        const result: number | undefined = spaceCheck(position, possiblePawnMoves[section][i], board, (i <= 2));
+        const newPosition: Couple = sumArrayCouple(possiblePawnMoves[section][i], position);
+
+        if (newPosition[0] > 8 || newPosition[1] > 8 || newPosition[0] < 1 || newPosition[1] < 1) {
+            break;
+        }
+
+        const result: number | undefined = spaceCheck(position, possiblePawnMoves[section][i], board, (i <= 1));
 
         if (result === undefined) {
             if (i === 0) {
@@ -137,19 +143,21 @@ const bishopCheck = (position: Couple, board: string): number[] => {
         let currentOffset = offset;
 
         while (true) {
+            const newPosition: Couple = sumArrayCouple(currentOffset, position);
 
-            const result: number | undefined = spaceCheck(position, currentOffset, board);
-
-            if (sumArrayCouple(currentOffset, position)[0] > 8 || sumArrayCouple(currentOffset, position)[0] < 1) {
+            if (newPosition[0] > 8 || newPosition[1] > 8 || newPosition[0] < 1 || newPosition[1] < 1) {
                 break;
             }
 
-            if (result === undefined) {
+            const result: number | undefined = spaceCheck(position, currentOffset, board);
+
+            results.push(result);
+
+            if (board[positionNumericalToIndex(newPosition)] !== ' ') {
                 break;
             }
 
             currentOffset = sumArrayCouple(currentOffset, offset);
-            results.push(result);
         }
 
     });
@@ -173,6 +181,11 @@ const knightCheck = (position: Couple, board: string): number[] => {
     ];
 
     possibleKnightMoves.forEach((offset: Couple) => {
+        const newPosition: Couple = sumArrayCouple(offset, position);
+
+        if (newPosition[0] > 8 || newPosition[1] > 8 || newPosition[0] < 1 || newPosition[1] < 1) {
+            return;
+        }
 
         const result: number | undefined = spaceCheck(position, offset, board);
 
@@ -202,19 +215,22 @@ const rookCheck = (position: Couple, board: string): number[] => {
         let currentOffset = offset;
 
         while (true) {
+            const newPosition: Couple = sumArrayCouple(currentOffset, position);
 
-            const result: number | undefined = spaceCheck(position, currentOffset, board);
-
-            if (sumArrayCouple(currentOffset, position)[0] > 8 || sumArrayCouple(currentOffset, position)[0] < 1) {
+            if (newPosition[0] > 8 || newPosition[1] > 8 || newPosition[0] < 1 || newPosition[1] < 1) {
                 break;
             }
 
-            if (result === undefined) {
+            const result: number | undefined = spaceCheck(position, currentOffset, board);
+
+
+            results.push(result);
+
+            if (board[positionNumericalToIndex(newPosition)] !== ' ') {
                 break;
             }
 
             currentOffset = sumArrayCouple(currentOffset, offset);
-            results.push(result);
         }
 
     });
@@ -250,6 +266,12 @@ const kingCheck = (position: Couple, board: string): number[] => {
     ];
 
     possibleKingMoves.forEach((offset: Couple) => {
+
+        const newPosition: Couple = sumArrayCouple(offset, position);
+
+        if (newPosition[0] > 8 || newPosition[1] > 8 || newPosition[0] < 1 || newPosition[1] < 1) {
+            return;
+        }
 
         const result: number | undefined = spaceCheck(position, offset, board);
 

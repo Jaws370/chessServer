@@ -18,7 +18,7 @@ export const goMove = function (io: Server, clientStatus: ClientStatus, room: st
     if (possibleMoves.includes(positionAlphabeticalToIndex(clientStatus.move.new))) {
         clientToMove = clientStatus.clientNumber === 1 ? 2 : 1;
         wasValid = true;
-        clientStatus.previousMoves = [...clientStatus.previousMoves, clientStatus.move.new];
+        clientStatus.previousMoves = [...clientStatus.previousMoves, clientStatus.move.new, clientStatus.move.old];
         clientStatus.board = updateBoard(clientStatus.move, clientStatus.board);
     }
 

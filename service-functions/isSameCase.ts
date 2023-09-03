@@ -5,7 +5,7 @@ export const isSameCase = function (firstPiece: string, secondPiece: string): bo
     }
 
     const firstIsLower = firstPiece.toLowerCase() === firstPiece;
-    const secondIsLower = firstPiece.toLowerCase() === secondPiece;
+    const secondIsLower = secondPiece.toLowerCase() === secondPiece;
 
     if (firstIsLower === secondIsLower) {
         
