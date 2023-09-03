@@ -39,5 +39,5 @@ io.on('connection', (socket: Socket) => {
 
 const port = 3000;
 server.listen(port, () => {
-    console.log(`Server has begun listening on port ${port}`);
+    console.log(`Port ${port} opened`);
 });
