@@ -12,7 +12,7 @@ export const boardCheck = (clientStatus: ClientStatus): number[] => {
     const position: Couple = positionAlphabeticalToNumerical(clientStatus.move.old);
     const activePiece: string = clientStatus.board[positionNumericalToIndex(position)];
 
-    let possibleMoves: number[];
+    let possibleMoves: number[] = [];
 
     switch (activePiece.toLowerCase()) {
         case 'p':
@@ -51,7 +51,6 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
     const newPosition: number = positionNumericalToIndex(rawNewPosition);
 
     if (isSameCase(board[position], board[newPosition])) {
-
         return;
 
     }
@@ -78,7 +77,7 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
 
 const pawnCheck = (position: Couple, board: string, unmoved: boolean, activePiece: string): number[] => {
 
-    let results: number[];
+    let results: number[] = [];
 
     const possiblePawnMoves: Couple[][] = [
         [
@@ -124,7 +123,7 @@ const pawnCheck = (position: Couple, board: string, unmoved: boolean, activePiec
 
 const bishopCheck = (position: Couple, board: string): number[] => {
 
-    let results: number[];
+    let results: number[] = [];
 
     const bishopDirections: Couple[] = [
         [1, 1],
@@ -139,11 +138,11 @@ const bishopCheck = (position: Couple, board: string): number[] => {
 
         while (true) {
 
+            const result: number | undefined = spaceCheck(position, currentOffset, board);
+
             if (sumArrayCouple(currentOffset, position)[0] > 8 || sumArrayCouple(currentOffset, position)[0] < 1) {
                 break;
             }
-
-            const result: number | undefined = spaceCheck(position, offset, board);
 
             if (result === undefined) {
                 break;
@@ -160,7 +159,7 @@ const bishopCheck = (position: Couple, board: string): number[] => {
 
 const knightCheck = (position: Couple, board: string): number[] => {
 
-    let results: number[];
+    let results: number[] = [];
 
     const possibleKnightMoves: Couple[] = [
         [2, 1],
@@ -189,7 +188,7 @@ const knightCheck = (position: Couple, board: string): number[] => {
 
 const rookCheck = (position: Couple, board: string): number[] => {
 
-    let results: number[];
+    let results: number[] = [];
 
     const rookDirections: Couple[] = [
         [1, 0],
@@ -204,11 +203,11 @@ const rookCheck = (position: Couple, board: string): number[] => {
 
         while (true) {
 
+            const result: number | undefined = spaceCheck(position, currentOffset, board);
+
             if (sumArrayCouple(currentOffset, position)[0] > 8 || sumArrayCouple(currentOffset, position)[0] < 1) {
                 break;
             }
-
-            const result: number | undefined = spaceCheck(position, offset, board);
 
             if (result === undefined) {
                 break;
@@ -226,7 +225,7 @@ const rookCheck = (position: Couple, board: string): number[] => {
 
 const queenCheck = (position: Couple, board: string): number[] => {
 
-    let results: number[];
+    let results: number[] = [];
 
     results = bishopCheck(position, board);
     results.push(...rookCheck(position, board));
@@ -237,7 +236,7 @@ const queenCheck = (position: Couple, board: string): number[] => {
 
 const kingCheck = (position: Couple, board: string): number[] => {
 
-    let results: number[];
+    let results: number[] = [];
 
     const possibleKingMoves: Couple[] = [
         [1, 1],
