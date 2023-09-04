@@ -8,7 +8,11 @@ import { unpack } from './packaging/unpacking';
 import { ClientStatus } from './types/clientStatus';
 
 const server = createServer();
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: ['http://localhost:3000']
+    }
+});
 
 io.on('connection', (socket: Socket) => {
     console.log('new client connected');
