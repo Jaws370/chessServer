@@ -10,7 +10,7 @@ import { ClientStatus } from './types/clientStatus';
 const server = createServer();
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3000']
+        origin: 'http://localhost:4000'
     }
 });
 
@@ -41,7 +41,7 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-const port = 3000;
+const port = 4000;
 server.listen(port, () => {
     console.log(`Port ${port} opened`);
 });
