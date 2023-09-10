@@ -1,11 +1,11 @@
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 
-import { joinRoom, isRoomFull, leaveRoom } from './handlers/room-handlers';
-import { goMove } from './handlers/game-handlers';
-import { unpack } from './packaging/unpacking';
+import { joinRoom, isRoomFull, leaveRoom } from './src/handlers/room-handlers';
+import { goMove } from './src/handlers/game-handlers';
+import { unpack } from './src/packaging/unpacking';
 
-import { ClientStatus } from './types/clientStatus';
+import { ClientStatus } from './src/types/clientStatus';
 
 const server = createServer();
 const io = new Server(server, {

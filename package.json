@@ -4,14 +4,17 @@
   "description": "server for chess project",
   "main": "server.ts",
   "scripts": {
-    "start": "npx ts-node server.ts",
-    "test": "echo \"no test specified\" "
+    "dev": "nodemon",
+    "start": "console-ninja npx ts-node server.ts"
   },
   "author": "Jack Werner",
   "license": "MIT",
   "dependencies": {
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
     "@types/socket.io": "^3.0.2",
-    "socket.io": "^4.7.2",
+    "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }

@@ -1,14 +1,32 @@
-import { positionNumericalToIndex, positionAlphabeticalToNumerical } from './position-transformations';
+import { positionNumericalToIndex, positionAlphabeticalToNumerical, positionAlphabeticalToIndex } from './position-transformations';
 import { isSameCase } from '../service-functions/isSameCase';
 import { isLowerCase } from '../service-functions/isLowerCase';
 import { sumArrayCouple } from '../service-functions/sumArrayCouple';
+import { coupleDifference } from '../service-functions/coupleDifference';
 
 import { ClientStatus } from '../types/clientStatus';
 import { Couple } from '../types/couple';
 
 export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
+    console.log(clientStatus);
+
     const hasMoved: boolean = clientStatus.previousMoves.includes(clientStatus.move.old);
+
+    let lastMove: number = -1000;
+    let wasDoublePawn = false;
+
+    if (clientStatus.previousMoves.length > 1) {
+        const rawLastMoves: string[] = [clientStatus.previousMoves[clientStatus.previousMoves.length - 2], clientStatus.previousMoves[clientStatus.previousMoves.length - 1]];
+        console.log(rawLastMoves);
+        lastMove = positionAlphabeticalToIndex(rawLastMoves[1]);
+        const lastMoves: Couple[] = [positionAlphabeticalToNumerical(rawLastMoves[0]), positionAlphabeticalToNumerical(rawLastMoves[1])];
+        const lastDifference: Couple = coupleDifference(lastMoves[0], lastMoves[1]);
+        console.log(lastMoves);
+        console.log(lastDifference[1]);
+        wasDoublePawn = lastDifference[0] === 0 && Math.abs(lastDifference[1]) === 2 && clientStatus.board[positionNumericalToIndex(lastMoves[1])].toLowerCase() === 'p';
+        console.log(wasDoublePawn);
+    }
 
     const position: Couple = positionAlphabeticalToNumerical(clientStatus.move.old);
     const activePiece: string = clientStatus.board[positionNumericalToIndex(position)];
@@ -17,7 +35,7 @@ export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
     switch (activePiece.toLowerCase()) {
         case 'p':
-            possibleMoves = pawnCheck(position, clientStatus.board, hasMoved, activePiece);
+            possibleMoves = pawnCheck(position, clientStatus.board, hasMoved, activePiece, lastMove, wasDoublePawn);
             break;
 
         case 'b':
@@ -75,7 +93,7 @@ const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmp
 
 }
 
-const pawnCheck = (position: Couple, board: string, hasMoved: boolean, activePiece: string): number[] => {
+const pawnCheck = (position: Couple, board: string, hasMoved: boolean, activePiece: string, lastMove: number, wasDoublePawn: boolean): number[] => {
 
     let results: number[] = [];
 
@@ -109,6 +127,13 @@ const pawnCheck = (position: Couple, board: string, hasMoved: boolean, activePie
 
         if (newPosition[0] > 8 || newPosition[1] > 8 || newPosition[0] < 1 || newPosition[1] < 1) {
             break;
+        }
+
+        if (i >= 2 && wasDoublePawn && lastMove - positionNumericalToIndex(position) === possiblePawnMoves[section][i][0]) {
+            const result: number | undefined = spaceCheck(position, possiblePawnMoves[section][i], board);
+            results.push(result);
+            console.log(result);
+            continue;
         }
 
         const result: number | undefined = spaceCheck(position, possiblePawnMoves[section][i], board, (i <= 1));
