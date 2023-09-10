@@ -7,14 +7,19 @@ import { coupleDifference } from '../service-functions/coupleDifference';
 import { ClientStatus } from '../types/clientStatus';
 import { Couple } from '../types/couple';
 
+/**
+ * 
+ * @param clientStatus takes the current positioning of the client
+ * @returns the moves that the client can make with the piece
+ */
 export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
-    const previousMoves = clientStatus.previousMoves!;
-    const move = {
-        old: clientStatus.move!.old,
-        new: clientStatus.move!.new
+    const previousMoves: ClientStatus['previousMoves'] = clientStatus.previousMoves;
+    const move: ClientStatus['move'] = {
+        old: clientStatus.move.old,
+        new: clientStatus.move.new
     }
-    const board = clientStatus.board!;
+    const board: ClientStatus['board'] = clientStatus.board;
 
     const hasMoved: boolean = previousMoves.includes(move.old);
 
@@ -64,6 +69,14 @@ export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
 }
 
+/**
+ * 
+ * @param rawPosition the position in form Couple
+ * @param offset the offset of the new space in form Couple
+ * @param board the current board
+ * @param needsEmptySpace a bool of whether the space needs to be empty (for pawn checking)
+ * @returns the position in index form if the space is good, else nothing
+ */
 const spaceCheck = (rawPosition: Couple, offset: Couple, board: string, needsEmptySpace: boolean | undefined = undefined): number | undefined => {
     const rawNewPosition: Couple = sumArrayCouple(rawPosition, offset);
 

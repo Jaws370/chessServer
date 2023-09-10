@@ -3,7 +3,8 @@ import { Server, Socket } from 'socket.io';
 
 import { joinRoom, isRoomFull, leaveRoom } from './src/handlers/room-handlers';
 import { goMove } from './src/handlers/game-handlers';
-import { unpack } from './src/packaging/unpacking';
+import { unpackRM } from './src/packaging/unpackRM';
+import { unpackCS } from './src/packaging/unpackCS';
 
 import { ClientStatus } from './src/types/clientStatus';
 
@@ -19,7 +20,7 @@ io.on('connection', (socket: Socket) => {
 
     socket.on('room:join', (rawRoom: string) => {
 
-        const room: object = unpack(rawRoom);
+        const room: string = unpackRM(rawRoom);
         joinRoom.call(socket, room);
         isRoomFull.call(socket, io, room);
 
@@ -28,7 +29,7 @@ io.on('connection', (socket: Socket) => {
         let isInGame: boolean = true;
 
         socket.on('game:move', (rawClientStatus: string) => {
-            const clientStatus: ClientStatus = unpack(rawClientStatus);
+            const clientStatus: ClientStatus = unpackCS(rawClientStatus);
             console.log('move request recieved');
             goMove.call(socket, io, clientStatus, room);
         });

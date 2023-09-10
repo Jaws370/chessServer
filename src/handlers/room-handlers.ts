@@ -13,7 +13,7 @@ export const isRoomFull = function (io: Server, room: string) {
     const clientCount: number = io.sockets.adapter.rooms.get(room)?.size || 0;
 
     if (clientCount === full) {
-        const rawInRoomIds: Set<string> = io.sockets.adapter.rooms.get(room);
+        const rawInRoomIds: Set<string> = io.sockets.adapter.rooms.get(room)!;
         let inRoomIds: [string, string] = Array.from(rawInRoomIds).slice(0, 2) as [string, string];
         inRoomIds = inRoomIds.sort((a, b) => 0.5 - Math.random());
 
