@@ -9,8 +9,6 @@ import { Couple } from '../types/couple';
 
 export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
-    console.log(clientStatus);
-
     const hasMoved: boolean = clientStatus.previousMoves.includes(clientStatus.move.old);
 
     let lastMove: number = -1000;
@@ -18,14 +16,10 @@ export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
     if (clientStatus.previousMoves.length > 1) {
         const rawLastMoves: string[] = [clientStatus.previousMoves[clientStatus.previousMoves.length - 2], clientStatus.previousMoves[clientStatus.previousMoves.length - 1]];
-        console.log(rawLastMoves);
         lastMove = positionAlphabeticalToIndex(rawLastMoves[1]);
         const lastMoves: Couple[] = [positionAlphabeticalToNumerical(rawLastMoves[0]), positionAlphabeticalToNumerical(rawLastMoves[1])];
         const lastDifference: Couple = coupleDifference(lastMoves[0], lastMoves[1]);
-        console.log(lastMoves);
-        console.log(lastDifference[1]);
         wasDoublePawn = lastDifference[0] === 0 && Math.abs(lastDifference[1]) === 2 && clientStatus.board[positionNumericalToIndex(lastMoves[1])].toLowerCase() === 'p';
-        console.log(wasDoublePawn);
     }
 
     const position: Couple = positionAlphabeticalToNumerical(clientStatus.move.old);
@@ -132,7 +126,6 @@ const pawnCheck = (position: Couple, board: string, hasMoved: boolean, activePie
         if (i >= 2 && wasDoublePawn && lastMove - positionNumericalToIndex(position) === possiblePawnMoves[section][i][0]) {
             const result: number | undefined = spaceCheck(position, possiblePawnMoves[section][i], board);
             results.push(result);
-            console.log(result);
             continue;
         }
 
