@@ -9,13 +9,19 @@ import { Couple } from '../types/couple';
 
 export const boardCheck = (clientStatus: ClientStatus): number[] => {
 
-    const hasMoved: boolean = clientStatus.previousMoves.includes(clientStatus.move.old);
+    const previousMoves = clientStatus.previousMoves!;
+    const move = {
+        old: clientStatus.move!.old,
+        new: clientStatus.move!.new
+    }
+
+    const hasMoved: boolean = previousMoves.includes(clientStatus.move.old);
 
     let lastMove: number = -1000;
     let wasDoublePawn = false;
 
-    if (clientStatus.previousMoves.length > 1) {
-        const rawLastMoves: string[] = [clientStatus.previousMoves[clientStatus.previousMoves.length - 2], clientStatus.previousMoves[clientStatus.previousMoves.length - 1]];
+    if (previousMoves.length > 1) {
+        const rawLastMoves: string[] = [previousMoves[previousMoves.length - 2], previousMoves[previousMoves.length - 1]];
         lastMove = positionAlphabeticalToIndex(rawLastMoves[1]);
         const lastMoves: Couple[] = [positionAlphabeticalToNumerical(rawLastMoves[0]), positionAlphabeticalToNumerical(rawLastMoves[1])];
         const lastDifference: Couple = coupleDifference(lastMoves[0], lastMoves[1]);
